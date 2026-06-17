@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ОГЭ Информатика: Python Задание 16</title>
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js" type="text/javascript"></script>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --panel-bg: #1a1a1e;
+            --editor-bg: #0f0f11;
+            --text-color: #e2e8f0;
+            --accent-color: #6366f1;
+            --accent-hover: #4f46e5;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            --oge-color: #a855f7;
+            --oge-bg: #23153c;
+        }
+
+        body {
+            margin: 0; padding: 25px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color); color: var(--text-color);
+            display: flex; flex-direction: column; align-items: center;
+            height: 100vh; box-sizing: border-box;
+        }
+
+        h1 {
+            margin: 0 0 20px 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .container {
+            display: flex; gap: 25px; width: 100%; max-width: 1300px; height: calc(100% - 65px);
+        }
+
+        .panel {
+            background: var(--panel-bg); border: 1px solid #27272a; border-radius: 12px;
+            padding: 20px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            display: flex; flex-direction: column;
+        }
+
+        .left-panel { flex: 1.2; }
+        
+        .right-panel { 
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sub-panel-top {
+            flex: 1.1;
+            background: var(--panel-bg); border: 1px solid #27272a; border-radius: 12px;
+            padding: 20px; overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .sub-panel-bottom {
+            flex: 0.9;
+            background: var(--panel-bg); border: 1px solid #27272a; border-radius: 12px;
+            padding: 20px; display: flex; flex-direction: column;
+        }
+
+        .controls { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
+
+        .mode-selection { display: flex; gap: 15px; margin-bottom: 15px; justify-content: center; width: 100%; }
+
+        button {
+            background-color: var(--accent-color); color: white; border: none;
+            padding: 10px 18px; border-radius: 6px; cursor: pointer;
+            font-weight: 600; font-size: 14px; transition: all 0.2s ease;
+        }
+        button:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
+        button.btn-clear { background-color: #27272a; border: 1px solid #3f3f46; color: #d4d4d8; }
+        button.btn-clear:hover { background-color: #3f3f46; color: #fff; }
+        button.btn-oge { background-color: var(--oge-color); }
+        button.btn-oge:hover { background-color: #9333ea; }
+        button.btn-hint { background-color: #eab308; color: #000; display: none; }
+        button.btn-hint:hover { background-color: #ca8a04; }
+
+        select {
+            background: #27272a; color: #fff; border: 1px solid #3f3f46;
+            padding: 8px 12px; border-radius: 6px; font-weight: 600; outline: none; cursor: pointer;
+        }
+
+        .task-box {
+            background: #1e1e24; border: 1px solid #27272a; width: 100%; box-sizing: border-box;
+            border-radius: 8px; padding: 15px; font-size: 14px; line-height: 1.6; display: none;
+        }
+        .task-title { font-weight: 700; color: #fff; margin-bottom: 8px; font-size: 16px; }
+
+        textarea {
+            flex: 1; background-color: var(--editor-bg); color: #a7f3d0;
+            border: 1px solid #27272a; border-radius: 8px; padding: 15px;
+            font-family: 'Fira Code', 'Courier New', monospace; font-size: 15px;
+            resize: none; line-height: 1.5; outline: none;
+        }
+
+        .block-title { font-size: 14px; font-weight: 600; color: #a1a1aa; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+
+        .terminal-container {
+            flex: 1; display: flex; flex-direction: column; background: #050507; 
+            border: 1px solid #27272a; border-radius: 8px; overflow: hidden;
+        }
+        .console {
+            flex: 1; padding: 12px; font-family: 'Fira Code', monospace; font-size: 14px;
+            overflow-y: auto; color: #cbd5e1; white-space: pre-wrap;
+        }
+        .console.error { color: var(--error-color); }
+        .console.success { color: var(--success-color); }
+        
+        .terminal-input-row { display: flex; border-top: 1px solid #27272a; background: #0f0f11; }
+        .terminal-input {
+            flex: 1; background: transparent; border: none; color: #fff; padding: 10px 12px;
+            font-family: 'Fira Code', monospace; font-size: 14px; outline: none;
+        }
+        .terminal-send-btn { background: #27272a; border: none; color: #cbd5e1; padding: 0 15px; cursor: pointer; font-size: 13px; }
+        .terminal-send-btn:hover { background: #3f3f46; color: #fff; }
+
+        .example-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        .example-table th, .example-table td { border: 1px solid #3f3f46; padding: 6px 10px; text-align: left; }
+        .example-table th { background: #27272a; color: #a1a1aa; }
+        
+        .placeholder-text { color: #a1a1aa; text-align: center; font-size: 15px; font-weight: 500; width: 100%; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .badge-normal { background: var(--accent-color); color: white; }
+        .badge-oge { background: var(--oge-color); color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>ОГЭ Информатика — Симулятор Python (Задание 16)</h1>
+
+    <div class="container">
+        <div class="panel left-panel">
+            <div class="controls">
+                <select id="taskSelect" style="display:none;">
+                    <option value="task1">Задание 16_1 (0FCA49)</option>
+                    <option value="task2">Задание 16_2 (B9E24F)</option>
+                    <option value="task3">Задание 16_3 (11484C)</option>
+                    <option value="task4">Задание 16_4 (20C643)</option>
+                    <option value="task5">Задание 16_5 (584B41)</option>
+                    <option value="task6">Задание 16_6 (CC7540)</option>
+                    <option value="task7">Задание 16_7 (B6EBF2)</option>
+                    <option value="task8">Задание 16_8 (AB87F8)</option>
+                    <option value="task9">Задание 16_9 (01BE01)</option>
+                    <option value="task10">Задание 16_10 (014503)</option>
+                    <option value="task11">Задание 16_11 (026108)</option>
+                    <option value="task12">Задание 16_12 (7E3F0A)</option>
+                    <option value="task13">Задание 16_13 (12350E)</option>
+                    <option value="task14">Задание 16_14 (41D07B)</option>
+                    <option value="task15">Задание 16_15 (87B779)</option>
+                    <option value="task16">Задание 16_16 (F81EBB)</option>
+                    <option value="task17">Задание 16_17 (F567B9)</option>
+                    <option value="task18">Задание 16_18 (50D7B2)</option>
+                    <option value="task19">Задание 16_19 (F33914)</option>
+                    <option value="task20">Задание 16_20 (0B7312)</option>
+                    <option value="task21">Задание 16_21 (01BD13)</option>
+                    <option value="task22">Задание 16_22 (B88012)</option>
+                    <option value="task23">Задание 16_23 (B1D013)</option>
+                    <option value="task24">Задание 16_24 (1F9015)</option>
+                    <option value="task25">Задание 16_25 (9B0618)</option>
+                    <option value="task26">Задание 16_26 (4CEE2A)</option>
+                    <option value="task27">Задание 16_27 (F0542E)</option>
+                    
+                    <option value="task_C9412A">Задание C9412A (16-ричн, 3-знач, оканч 8)</option>
+                    <option value="task_88822B">Задание 88822B (16-ричн, 3-знач, оканч 7, до 0)</option>
+                    <option value="task_F437DE">Задание F437DE (16-ричн, 3-знач, оканч 6)</option>
+                    <option value="task_0F8FD5">Задание 0F8FD5 (8-ричн, 4-знач, оканч 3)</option>
+                    <option value="task_B0B1DA">Задание B0B1DA (8-ричн, 4-знач, оканч 3, до 0)</option>
+                    <option value="task_1899DF">Задание 1899DF (16-ричн, 3-знач, оканч 1)</option>
+                    <option value="task_1670DB">Задание 1670DB (8-ричн, 3-знач, оканч 0)</option>
+                    <option value="task_1CF4DC">Задание 1CF4DC (16-ричн, 3-знач, оканч B, до 0)</option>
+                    <option value="task_C498D2">Задание C498D2 (16-ричн, 3-знач, оканч D)</option>
+                    <option value="task_9A0EDE">Задание 9A0EDE (5-ричн, оканч нечетн, до 0)</option>
+                    <option value="task_386FDC">Задание 386FDC (5-ричн, 4-знач, оканч 2, до 0)</option>
+                    <option value="task_FF105F">Задание FF105F (16-ричн, 3-знач, оканч A)</option>
+                    <option value="task_BDAD52">Задание BDAD52 (Ср. арифм, 7-ричн, нечетн, до 0)</option>
+                    <option value="task_5F695F">Задание 5F695F (16-ричн, 3-знач, оканч 7)</option>
+                    <option value="task_AEA9A4">Задание AEA9A4 (16-ричн, 3-знач, оканч 5)</option>
+                    <option value="task_C72FA1">Задание C72FA1 (16-ричн, 3-знач, оканч 3, до 0)</option>
+                    <option value="task_E124A8">Задание E124A8 (Сумма, 5-ричн, четн)</option>
+                </select>
+                <button id="runBtn" style="display:none;">▶ Запустить код</button>
+                <button id="hintBtn" class="btn-hint">Показать код решения</button>
+                <button id="resetCodeBtn" class="btn-clear" style="display:none;">Сбросить код</button>
+                <button id="changeModeBtn" class="btn-clear" style="display:none;">↩ Сменить режим</button>
+            </div>
+            
+            <textarea id="codeEditor" spellcheck="false" placeholder="# Выберите режим работы в правой панели..."></textarea>
+        </div>
+
+        <div class="right-panel">
+            <div class="sub-panel-top" id="topPanel">
+                <div id="modeSelectorWindow" class="placeholder-text" style="padding-top: 40px;">
+                    <p style="margin-bottom: 20px; color: #e2e8f0; font-size: 16px;">Выберите режим подготовки:</p>
+                    <div class="mode-selection">
+                        <button id="setNormalModeBtn">Обычный режим (Песочница)</button>
+                        <button id="setOgeModeBtn" class="btn-oge">Режим ОГЭ (С заданиями)</button>
+                    </div>
+                </div>
+
+                <div id="normalModeBox" class="placeholder-text" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px;">
+                        <span style="color: #fff; font-weight: bold;">Обычный режим</span>
+                        <span class="badge badge-normal">Песочница</span>
+                    </div>
+                    <p>Задания скрыты. Пишите любой код на Python слева, вводите данные и тестируйте свои алгоритмы без ограничений.</p>
+                </div>
+
+                <div id="taskBox" class="task-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div id="taskTitle" class="task-title" style="margin:0;">Загрузка...</div>
+                        <span class="badge badge-oge">Режим ОГЭ</span>
+                    </div>
+                    <div id="taskText">Текст задания...</div>
+                    <div id="taskExamples"></div>
+                </div>
+            </div>
+
+            <div class="sub-panel-bottom">
+                <div class="block-title">
+                    <span>Интерактивная командная строка (Terminal):</span>
+                </div>
+                <div class="terminal-container">
+                    <div id="console" class="console">Для начала работы выберите режим выше...</div>
+                    <div class="terminal-input-row">
+                        <input type="text" id="terminalInput" class="terminal-input" placeholder="Введите число и нажмите Enter..." disabled>
+                        <button id="terminalSendBtn" class="terminal-send-btn" disabled>Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const taskDatabase = {
+            task1: {
+                title: "Задание 16_1 (0FCA49)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет среднее арифметическое элементов, запись которых в системе счисления с основанием 7 оканчивается нечётной цифрой. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход в первой строке натуральное число – количество чисел N (3 ≤ N ≤ 10 000), затем N натуральных чисел, не превышающих 30 000, каждое в отдельной строке.<br><br>Программа должна вывести одно число – среднее арифметическое десятичных чисел (элементов последовательности), запись которых в 7-ричной системе счисления оканчивается нечётной цифрой, или «NO», если среди входных данных таких элементов нет.",
+                solution: "n = int(input())\ntotal_sum = 0\nk = 0\nfor i in range(n):\n    x = int(input())\n    if (x % 7) % 2 != 0:\n        total_sum += x\n        k += 1\nif k > 0:\n    print(total_sum / k)\nelse:\n    print('NO')",
+                examples: [{ in: "6\n12\n15\n10\n71\n50\n11", out: "31.6" }],
+                tests: [{ input: "6\n12\n15\n10\n71\n50\n11", expected: "31.6" }, { input: "3\n7\n14\n28", expected: "NO" }]
+            },
+            task2: {
+                title: "Задание 16_2 (B9E24F)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру D. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 256 <= x <= 4095 and x % 16 == 13:\n        k += 1\nprint(k)",
+                examples: [{ in: "173\n285\n893\n957\n4125\n0", out: "3" }],
+                tests: [{ input: "173\n285\n893\n957\n4125\n0", expected: "3" }, { input: "13\n4096\n0", expected: "0" }]
+            },
+            task3: {
+                title: "Задание 16_3 (11484C)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет количество элементов, запись которых в системе счисления с основанием 7 оканчивается цифрой 2. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход в первой строке натуральное число – количество чисел N (3 ≤ N ≤ 10 000), затем N натуральных чисел, не превышающих 30 000, каждое в отдельной строке.<br><br>Программа должна вывести одно число – количество десятичных чисел (элементов последовательности), запись которых в 7-ричной системе счисления оканчивается цифрой 2, или «NO», если среди входных данных таких элементов нет.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if x % 7 == 2:\n        k += 1\nif k > 0:\n    print(k)\nelse:\n    print('NO')",
+                examples: [{ in: "5\n37\n22\n16\n25\n42", out: "2" }],
+                tests: [{ input: "5\n37\n22\n16\n25\n42", expected: "2" }, { input: "3\n7\n14\n21", expected: "NO" }]
+            },
+            task4: {
+                title: "Задание 16_4 (20C643)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления четырёхзначна и оканчивается на цифру 5. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 512 <= x <= 4095 and x % 8 == 5:\n        k += 1\nprint(k)",
+                examples: [{ in: "485\n557\n893\n3029\n4125\n0", out: "3" }],
+                tests: [{ input: "485\n557\n893\n3029\n4125\n0", expected: "3" }, { input: "5\n4096\n0", expected: "0" }]
+            },
+            task5: {
+                title: "Задание 16_5 (584B41)",
+                text: "Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления четырёхзначна и оканчивается на цифру 4. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 512 <= x <= 4095 and x % 8 == 4:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n484\n556\n892\n3028\n4124", out: "3" }],
+                tests: [{ input: "5\n484\n556\n892\n3028\n4124", expected: "3" }, { input: "2\n10\n512", expected: "0" }]
+            },
+            task6: {
+                title: "Задание 16_6 (CC7540)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет наибольший элемент, запись которого в системе счисления с основанием 7 оканчивается нечётной цифрой. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход натуральные десятичные числа, не превышающие 30 000, каждое в отдельной строке. Количество введённых чисел неизвестно, их последовательность заканчивается числом 0 (0 – признак окончания ввода, в последовательность не входит).<br><br>Программа должна вывести одно десятичное число – наибольший элемент последовательности, запись которого в 7-ричной системе счисления оканчивается нечётной цифрой, или «NO», если среди входных данных таких элементов нет.",
+                solution: "mx = -1\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if (x % 7) % 2 != 0:\n        if x > mx:\n            mx = x\nif mx != -1:\n    print(mx)\nelse:\n    print('NO')",
+                examples: [{ in: "12\n15\n10\n71\n50\n11\n0", out: "71" }],
+                tests: [{ input: "12\n15\n10\n71\n50\n11\n0", expected: "71" }, { input: "7\n14\n0", expected: "NO" }]
+            },
+            task7: {
+                title: "Задание 16_7 (B6EBF2)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в системе счисления с основанием 5 четырёхзначна и оканчивается на цифру 0. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 125 <= x <= 624 and x % 5 == 0:\n        k += 1\nprint(k)",
+                examples: [{ in: "85\n135\n270\n495\n730\n0", out: "3" }],
+                tests: [{ input: "85\n135\n270\n495\n730\n0", expected: "3" }, { input: "25\n625\n0", expected: "0" }]
+            },
+            task8: {
+                title: "Задание 16_8 (AB87F8)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет количество элементов, запись которых в системе счисления с основанием 5 оканчивается нечётной цифрой. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход в первой строке натуральное число – количество чисел N (3 ≤ N ≤ 10 000), затем N натуральных чисел, не превышающих 30 000, каждое в отдельной строке.<br><br>Программа должна вывести одно число – количество десятичных чисел (элементов последовательности), запись которых в 5-ричной системе счисления оканчивается нечётной цифрой, или «NO», если среди входных данных таких элементов нет.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if (x % 5) % 2 != 0:\n        k += 1\nif k > 0:\n    print(k)\nelse:\n    print('NO')",
+                examples: [{ in: "6\n12\n15\n10\n71\n50\n11", out: "2" }],
+                tests: [{ input: "6\n12\n15\n10\n71\n50\n11", expected: "2" }, { input: "3\n5\n10\n0", expected: "NO" }]
+            },
+            task9: {
+                title: "Задание 16_9 (01BE01)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру E. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 256 <= x <= 4095 and x % 16 == 14:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n174\n286\n894\n958\n4126", out: "3" }],
+                tests: [{ input: "5\n174\n286\n894\n958\n4126", expected: "3" }, { input: "2\n14\n4096", expected: "0" }]
+            },
+            task10: {
+                title: "Задание 16_10 (014503)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет среднее арифметическое элементов, запись которых в системе счисления с основанием 5 оканчивается нечётной цифрой. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход натуральные десятичные числа, не превышающие 30 000, каждое в отдельной строке. Количество введённых чисел неизвестно, их последовательность заканчивается числом 0 (0 – признак окончания ввода, в последовательность не входит).<br><br>Программа должна вывести одно число – среднее арифметическое десятичных чисел (элементов последовательности), запись которых в системе счисления с основанием 5 оканчивается нечётной цифрой, или «NO», если среди входных данных таких элементов нет.",
+                solution: "total_sum = 0\nk = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if (x % 5) % 2 != 0:\n        total_sum += x\n        k += 1\nif k > 0:\n    print(total_sum / k)\nelse:\n    print('NO')",
+                examples: [{ in: "12\n15\n10\n71\n50\n11\n0", out: "41" }],
+                tests: [{ input: "12\n15\n10\n71\n50\n11\n0", expected: "41" }, { input: "5\n10\n0", expected: "NO" }]
+            },
+            task11: {
+                title: "Задание 16_11 (026108)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет среднее арифметическое элементов, запись которых в системе счисления с основанием 7 оканчивается цифрой 5. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход натуральные десятичные числа, не превышающие 30 000, каждое в отдельной строке. Количество введённых чисел неизвестно, их последовательность заканчивается числом 0 (0 – признак окончания ввода, в последовательность не входит).<br><br>Программа должна вывести одно число – среднее арифметическое десятичных чисел (элементов последовательности), запись которых в 7-ричной системе счисления оканчивается цифрой 5, или «NO», если среди входных данных таких элементов нет.",
+                solution: "total_sum = 0\nk = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if x % 7 == 5:\n        total_sum += x\n        k += 1\nif k > 0:\n    print(total_sum / k)\nelse:\n    print('NO')",
+                examples: [{ in: "12\n14\n20\n68\n25\n0", out: "40" }],
+                tests: [{ input: "12\n14\n20\n68\n25\n0", expected: "40" }, { input: "7\n14\n0", expected: "NO" }]
+            },
+            task12: {
+                title: "Задание 16_12 (7E3F0A)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления четырёхзначна и оканчивается на цифру 6. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 512 <= x <= 4095 and x % 8 == 6:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n486\n558\n894\n3030\n4126", out: "3" }],
+                tests: [{ input: "5\n486\n558\n894\n3030\n4126", expected: "3" }, { input: "1\n6", expected: "0" }]
+            },
+            task13: {
+                title: "Задание 16_13 (12350E)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 4. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 256 <= x <= 4095 and x % 16 == 4:\n        k += 1\nprint(k)",
+                examples: [{ in: "164\n276\n884\n948\n4116\n0", out: "3" }],
+                tests: [{ input: "164\n276\n884\n948\n4116\n0", expected: "3" }, { input: "4\n4096\n0", expected: "0" }]
+            },
+            task14: {
+                title: "Задание 16_14 (41D07B)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет среднее арифметическое элементов, запись которых в системе счисления с основанием 7 оканчивается цифрой 5. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход в первой строке натуральное число – количество чисел N (3 ≤ N ≤ 10 000), затем N натуральных чисел, не превышающих 30 000, каждое в отдельной строке.<br><br>Программа должна вывести одно число – среднее арифметическое десятичных чисел (элементов последовательности), запись которых в 7-ричной системе счисления оканчивается цифрой 5, или «NO», если среди входных данных таких элементов нет.",
+                solution: "n = int(input())\ntotal = 0\nk = 0\nfor i in range(n):\n    x = int(input())\n    if x % 7 == 5:\n        total += x\n        k += 1\nif k > 0:\n    print(total / k)\nelse:\n    print('NO')",
+                examples: [{ in: "5\n12\n14\n20\n68\n25", out: "40" }],
+                tests: [{ input: "5\n12\n14\n20\n68\n25", expected: "40" }, { input: "3\n7\n14\n21", expected: "NO" }]
+            },
+            task15: {
+                title: "Задание 16_15 (87B779)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 9. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 256 <= x <= 4095 and x % 16 == 9:\n        k += 1\nprint(k)",
+                examples: [{ in: "169\n281\n889\n953\n4121\n0", out: "3" }],
+                tests: [{ input: "169\n281\n889\n953\n4121\n0", expected: "3" }]
+            },
+            task16: {
+                title: "Задание 16_16 (F81EBB)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления трёхзначна и оканчивается на цифру 6. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 64 <= x <= 511 and x % 8 == 6:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n38\n166\n478\n510\n582", out: "3" }],
+                tests: [{ input: "5\n38\n166\n478\n510\n582", expected: "3" }]
+            },
+            task17: {
+                title: "Задание 16_17 (F567B9)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру A. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 256 <= x <= 4095 and x % 16 == 10:\n        k += 1\nprint(k)",
+                examples: [{ in: "170\n282\n890\n954\n4122\n0", out: "3" }],
+                tests: [{ input: "170\n282\n890\n954\n4122\n0", expected: "3" }]
+            },
+            task18: {
+                title: "Задание 16_18 (50D7B2)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет среднее арифметическое элементов, запись которых в системе счисления с основанием 7 оканчивается цифрой 4. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход в первой строке натуральное число – количество чисел N (3 ≤ N ≤ 10 000), затем N натуральных чисел, не превышающих 30 000, каждое в отдельной строке.<br><br>Программа должна вывести одно число – среднее арифметическое десятичных чисел (элементов последовательности), запись которых в 7-ричной системе счисления оканчивается цифрой 4, или «NO», если среди входных данных таких элементов нет.",
+                solution: "n = int(input())\ntotal = 0\nk = 0\nfor i in range(n):\n    x = int(input())\n    if x % 7 == 4:\n        total += x\n        k += 1\nif k > 0:\n    print(total / k)\nelse:\n    print('NO')",
+                examples: [{ in: "5\n11\n25\n30\n14\n54", out: "18" }],
+                tests: [{ input: "5\n11\n25\n30\n14\n54", expected: "18" }]
+            },
+            task19: {
+                title: "Задание 16_19 (F33914)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления четырёхзначна и оканчивается на цифру 7. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 512 <= x <= 4095 and x % 8 == 7:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n487\n559\n895\n3031\n4127", out: "3" }],
+                tests: [{ input: "5\n487\n559\n895\n3031\n4127", expected: "3" }]
+            },
+            task20: {
+                title: "Задание 16_20 (0B7312)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет сумму элементов, запись которых в системе счисления с основанием 7 оканчивается цифрой 3. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход натуральные десятичные числа, не превышающие 30 000, каждое в отдельной строке. Количество введённых чисел неизвестно, их последовательность заканчивается числом 0 (0 – признак окончания ввода, в последовательность не входит).<br><br>Программа должна вывести одно число – сумму десятичных чисел (элементов последовательности), запись которых в 7-ричной системе счисления оканчивается цифрой 3, или «NO», если среди входных данных таких элементов нет.",
+                solution: "s = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if x % 7 == 3:\n        s += x\nif s > 0:\n    print(s)\nelse:\n    print('NO')",
+                examples: [{ in: "33\n63\n17\n24\n53\n0", out: "41" }],
+                tests: [{ input: "33\n63\n17\n24\n53\n0", expected: "41" }]
+            },
+            task21: {
+                title: "Задание 16_21 (01BD13)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 5. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Послеветательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 256 <= x <= 4095 and x % 16 == 5:\n        k += 1\nprint(k)",
+                examples: [{ in: "165\n277\n885\n949\n4117\n0", out: "3" }],
+                tests: [{ input: "165\n277\n885\n949\n4117\n0", expected: "3" }]
+            },
+            task22: {
+                title: "Задание 16_22 (B88012)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления трёхзначна и оканчивается на цифру 4. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 64 <= x <= 511 and x % 8 == 4:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n36\n164\n476\n508\n580", out: "3" }],
+                tests: [{ input: "5\n36\n164\n476\n508\n580", expected: "3" }]
+            },
+            task23: {
+                title: "Задание 16_23 (B1D013)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления четырёхзначна и оканчивается на цифру 1. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 512 <= x <= 4095 and x % 8 == 1:\n        k += 1\nprint(k)",
+                examples: [{ in: "481\n553\n889\n3025\n4121\n0", out: "3" }],
+                tests: [{ input: "481\n553\n889\n3025\n4121\n0", expected: "3" }]
+            },
+            task24: {
+                title: "Задание 16_24 (1F9015)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в системе счисления с основанием 5 четырёхзначна и оканчивается на цифру 1. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 125 <= x <= 624 and x % 5 == 1:\n        k += 1\nprint(k)",
+                examples: [{ in: "86\n136\n271\n496\n731\n0", out: "3" }],
+                tests: [{ input: "86\n136\n271\n496\n731\n0", expected: "3" }]
+            },
+            task25: {
+                title: "Задание 16_25 (9B0618)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру B. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 256 <= x <= 4095 and x % 16 == 11:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n171\n283\n891\n955\n4123", out: "3" }],
+                tests: [{ input: "5\n171\n283\n891\n955\n4123", expected: "3" }]
+            },
+            task26: {
+                title: "Задание 16_26 (4CEE2A)",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет сумму элементов, запись которых в системе счисления с основанием 5 оканчивается чётной цифрой. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход натуральные десятичные числа, не превышающие 30 000, каждое в отдельной строке. Количество введённых чисел неизвестно, их последовательность заканчивается числом 0 (0 – признак окончания ввода, в последовательность не входит).<br><br>Программа должна вывести одно число – сумму десятичных чисел (элементов последовательности), запись которых в системе счисления с основанием 5 оканчивается чётной цифрой, или «NO», если среди входных данных таких элементов нет.",
+                solution: "s = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if (x % 5) % 2 == 0:\n        s += x\nif s > 0:\n    print(s)\nelse:\n    print('NO')",
+                examples: [{ in: "12\n15\n10\n71\n50\n11\n0", out: "87" }],
+                tests: [{ input: "12\n15\n10\n71\n50\n11\n0", expected: "87" }]
+            },
+            task27: {
+                title: "Задание 16_27 (F0542E)",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в системе счисления с основанием 5 четырёхзначна и оканчивается на цифру 3. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 125 <= x <= 624 and x % 5 == 3:\n        k += 1\nprint(k)",
+                examples: [{ in: "88\n138\n273\n498\n733\n0", out: "3" }],
+                tests: [{ input: "88\n138\n273\n498\n733\n0", expected: "3" }]
+            },
+            
+            /* НОВЫЕ ЗАДАНИЯ ИЗ СПИСКА */
+            task_C9412A: {
+                title: "Задание C9412A",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 8. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 256 <= x <= 4095 and x % 16 == 8:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n168\n280\n888\n952\n4120", out: "3" }],
+                tests: [{ input: "5\n168\n280\n888\n952\n4120", expected: "3" }, { input: "2\n8\n4096", expected: "0" }]
+            },
+            task_88822B: {
+                title: "Задание 88822B",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 7. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 256 <= x <= 4095 and x % 16 == 7:\n        k += 1\nprint(k)",
+                examples: [{ in: "167\n279\n887\n951\n4119\n0", out: "3" }],
+                tests: [{ input: "167\n279\n887\n951\n4119\n0", expected: "3" }]
+            },
+            task_F437DE: {
+                title: "Задание F437DE",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 6. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 256 <= x <= 4095 and x % 16 == 6:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n166\n278\n886\n950\n4118", out: "3" }],
+                tests: [{ input: "5\n166\n278\n886\n950\n4118", expected: "3" }]
+            },
+            task_0F8FD5: {
+                title: "Задание 0F8FD5",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления четырёхзначна и оканчивается на цифру 3. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 512 <= x <= 4095 and x % 8 == 3:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n483\n555\n891\n3027\n4123", out: "3" }],
+                tests: [{ input: "5\n483\n555\n891\n3027\n4123", expected: "3" }]
+            },
+            task_B0B1DA: {
+                title: "Задание B0B1DA",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления четырёхзначна и оканчивается на цифру 3. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 512 <= x <= 4095 and x % 8 == 3:\n        k += 1\nprint(k)",
+                examples: [{ in: "483\n555\n891\n3027\n4123\n0", out: "3" }],
+                tests: [{ input: "483\n555\n891\n3027\n4123\n0", expected: "3" }]
+            },
+            task_1899DF: {
+                title: "Задание 1899DF",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 1. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 256 <= x <= 4095 and x % 16 == 1:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n161\n273\n881\n945\n4113", out: "3" }],
+                tests: [{ input: "5\n161\n273\n881\n945\n4113", expected: "3" }]
+            },
+            task_1670DB: {
+                title: "Задание 1670DB",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в восьмеричной системе счисления трёхзначна и оканчивается на цифру 0. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 64 <= x <= 511 and x % 8 == 0:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n32\n160\n472\n504\n576", out: "3" }],
+                tests: [{ input: "5\n32\n160\n472\n504\n576", expected: "3" }]
+            },
+            task_1CF4DC: {
+                title: "Задание 1CF4DC",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру B. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 256 <= x <= 4095 and x % 16 == 11:\n        k += 1\nprint(k)",
+                examples: [{ in: "171\n283\n891\n955\n4123\n0", out: "3" }],
+                tests: [{ input: "171\n283\n891\n955\n4123\n0", expected: "3" }]
+            },
+            task_C498D2: {
+                title: "Задание C498D2",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру D. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 256 <= x <= 4095 and x % 16 == 13:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n173\n285\n893\n957\n4125", out: "3" }],
+                tests: [{ input: "5\n173\n285\n893\n957\n4125", expected: "3" }]
+            },
+            task_9A0EDE: {
+                title: "Задание 9A0EDE",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет количество элементов, запись которых в системе счисления с основанием 5 оканчивается нечётной цифрой. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход натуральные десятичные числа, не превышающие 30 000, каждое в отдельной строке. Количество введённых чисел неизвестно, их последовательность заканчивается числом 0 (0 – признак окончания ввода, в последовательность не входит).<br><br>Программа должна вывести одно число – количество десятичных чисел (элементов последовательности), запись которых в системе счисления с основанием 5 оканчивается нечётной цифрой, или «NO», если среди входных данных таких элементов нет.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if (x % 5) % 2 != 0:\n        k += 1\nif k > 0:\n    print(k)\nelse:\n    print('NO')",
+                examples: [{ in: "12\n15\n10\n71\n50\n11\n0", out: "2" }],
+                tests: [{ input: "12\n15\n10\n71\n50\n11\n0", expected: "2" }, { input: "5\n10\n0", expected: "NO" }]
+            },
+            task_386FDC: {
+                title: "Задание 386FDC",
+                text: "Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в системе счисления с основанием 5 четырёхзначна и оканчивается на цифру 2. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 125 <= x <= 624 and x % 5 == 2:\n        k += 1\nprint(k)",
+                examples: [{ in: "87\n137\n272\n497\n732\n0", out: "3" }],
+                tests: [{ input: "87\n137\n272\n497\n732\n0", expected: "3" }]
+            },
+            task_FF105F: {
+                title: "Задание FF105F",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру A. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 256 <= x <= 4095 and x % 16 == 10:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n170\n282\n890\n954\n4122", out: "3" }],
+                tests: [{ input: "5\n170\n282\n890\n954\n4122", expected: "3" }]
+            },
+            task_BDAD52: {
+                title: "Задание BDAD52",
+                text: "Дайте развернутый ответ.<br>Напишите программу, которая в последовательности натуральных десятичных чисел определяет среднее арифметическое элементов, запись которых в системе счисления с основанием 7 оканчивается нечётной цифрой. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход натуральные десятичные числа, не превышающие 30 000, каждое в отдельной строке. Количество введённых чисел неизвестно, их последовательность заканчивается числом 0 (0 – признак окончания ввода, в последовательность не входит).<br><br>Программа должна вывести одно число – среднее арифметическое десятичных чисел (элементов последовательности), запись которых в системе счисления с основанием 7 оканчивается нечётной цифрой, или «NO», если среди входных данных таких элементов нет.",
+                solution: "s = 0\nk = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if (x % 7) % 2 != 0:\n        s += x\n        k += 1\nif k > 0:\n    print(s / k)\nelse:\n    print('NO')",
+                examples: [{ in: "12\n15\n10\n71\n50\n11\n0", out: "31.6" }],
+                tests: [{ input: "12\n15\n10\n71\n50\n11\n0", expected: "31.6" }, { input: "7\n14\n0", expected: "NO" }]
+            },
+            task_5F695F: {
+                title: "Задание 5F695F",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 7. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 256 <= x <= 4095 and x % 16 == 7:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n167\n279\n887\n951\n4119", out: "3" }],
+                tests: [{ input: "5\n167\n279\n887\n951\n4119", expected: "3" }]
+            },
+            task_AEA9A4: {
+                title: "Задание AEA9A4",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 5. В ответе запишите количество искомых элементов.<br><br>На вход программе сначала подаётся количество элементов последовательности N (1 ≤ N ≤ 1000), затем каждый элемент последовательности в отдельной строке.<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "n = int(input())\nk = 0\nfor i in range(n):\n    x = int(input())\n    if 256 <= x <= 4095 and x % 16 == 5:\n        k += 1\nprint(k)",
+                examples: [{ in: "5\n165\n277\n885\n949\n4117", out: "3" }],
+                tests: [{ input: "5\n165\n277\n885\n949\n4117", expected: "3" }]
+            },
+            task_C72FA1: {
+                title: "Задание C72FA1",
+                text: "Дайте развернутый ответ.<br>Напишите программу подсчёта количества элементов последовательности натуральных чисел, запись которых в шестнадцатеричной системе счисления трёхзначна и оканчивается на цифру 3. В ответе запишите количество искомых элементов.<br><br>Программа получает на вход натуральные числа. Количество введённых чисел неизвестно, но не превышает 1000. Последовательность чисел заканчивается числом 0 (0 – признак окончания ввода, не входит в последовательность).<br><br>Программа должна напечатать только одно число – количество искомых элементов последовательности.",
+                solution: "k = 0\nwhile True:\n    x = int(input())\n    if x == 0:\n        break\n    if 256 <= x <= 4095 and x % 16 == 3:\n        k += 1\nprint(k)",
+                examples: [{ in: "163\n275\n883\n947\n4115\n0", out: "3" }],
+                tests: [{ input: "163\n275\n883\n947\n4115\n0", expected: "3" }]
+            },
+            task_E124A8: {
+                title: "Задание E124A8",
+                text: "Напишите программу, которая в последовательности натуральных десятичных чисел определяет сумму элементов, запись которых в системе счисления с основанием 5 оканчивается чётной цифрой. Если среди входных данных таких элементов нет, программа должна вывести «NO».<br><br>Программа получает на вход в первой строке натуральное число – количество чисел N (3 ≤ N ≤ 10 000), затем N натуральных чисел, не превышающих 30 000, каждое в отдельной строке.<br><br>Программа должна вывести одно число – сумму десятичных чисел (элементов последовательности), запись которых в 5-ричной системе счисления оканчивается чётной цифрой, или «NO», если среди входных данных таких элементов нет.",
+                solution: "n = int(input())\ns = 0\nfor i in range(n):\n    x = int(input())\n    if (x % 5) % 2 == 0:\n        s += x\nif s > 0:\n    print(s)\nelse:\n    print('NO')",
+                examples: [{ in: "6\n12\n15\n10\n71\n50\n11", out: "87" }],
+                tests: [{ input: "6\n12\n15\n10\n71\n50\n11", expected: "87" }, { input: "3\n11\n71\n11", expected: "NO" }]
+            }
+        };
+
+        let currentMode = null; 
+        let inputQueue = [];
+        let inputResolver = null;
+
+        const taskSelect = document.getElementById('taskSelect');
+        const codeEditor = document.getElementById('codeEditor');
+        const consoleEl = document.getElementById('console');
+        const terminalInput = document.getElementById('terminalInput');
+        const terminalSendBtn = document.getElementById('terminalSendBtn');
+        const modeSelectorWindow = document.getElementById('modeSelectorWindow');
+        const taskBox = document.getElementById('taskBox');
+        const normalModeBox = document.getElementById('normalModeBox');
+
+        const runBtn = document.getElementById('runBtn');
+        const hintBtn = document.getElementById('hintBtn');
+        const resetCodeBtn = document.getElementById('resetCodeBtn');
+        const changeModeBtn = document.getElementById('changeModeBtn');
+
+        document.getElementById('setNormalModeBtn').addEventListener('click', () => activateInterface('normal'));
+        document.getElementById('setOgeModeBtn').addEventListener('click', () => activateInterface('oge'));
+        changeModeBtn.addEventListener('click', resetToMainMenu);
+
+        hintBtn.addEventListener('click', () => {
+            if (currentMode === 'oge') {
+                codeEditor.value = taskDatabase[taskSelect.value].solution;
+                printLog("$ Код решения загружен в редактор.");
+            }
+        });
+
+        codeEditor.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                const text = this.value;
+                const beforeCursor = text.substring(0, start);
+                const lastNewLine = beforeCursor.lastIndexOf('\n');
+                const currentLine = beforeCursor.substring(lastNewLine + 1);
+                const match = currentLine.match(/^(\s*)/);
+                let currentIndent = match ? match[1] : '';
+                if (currentLine.trim().endsWith(':')) currentIndent += '    ';
+                const newText = text.substring(0, start) + '\n' + currentIndent + text.substring(end);
+                this.value = newText;
+                this.selectionStart = this.selectionEnd = start + 1 + currentIndent.length;
+            }
+        });
+
+        function activateInterface(mode) {
+            currentMode = mode;
+            modeSelectorWindow.style.display = "none";
+            runBtn.style.display = "inline-block";
+            resetCodeBtn.style.display = "inline-block";
+            changeModeBtn.style.display = "inline-block";
+
+            if (mode === 'normal') {
+                taskSelect.style.display = "none";
+                taskBox.style.display = "none";
+                hintBtn.style.display = "none";
+                normalModeBox.style.display = "block";
+                codeEditor.value = "print('Привет! Введи число:')\na = int(input())\nprint('Вы ввели:', a)";
+                printLog("$ Свободный режим запущен. Пишите код слева и тестируйте.");
+            } else {
+                taskSelect.style.display = "inline-block";
+                taskBox.style.display = "block";
+                hintBtn.style.display = "inline-block";
+                normalModeBox.style.display = "none";
+                loadTask(taskSelect.value);
+                printLog("$ Режим ОГЭ активирован. Редактор кода очищен. Напишите решение задачи.");
+            }
+        }
+
+        function resetToMainMenu() {
+            currentMode = null;
+            modeSelectorWindow.style.display = "block";
+            taskBox.style.display = "none";
+            normalModeBox.style.display = "none";
+            taskSelect.style.display = "none";
+            runBtn.style.display = "none";
+            hintBtn.style.display = "none";
+            resetCodeBtn.style.display = "none";
+            changeModeBtn.style.display = "none";
+            codeEditor.value = "";
+            terminalInput.disabled = true;
+            terminalSendBtn.disabled = true;
+            printLog("Для начала работы выберите режим выше...");
+        }
+
+        function loadTask(taskId) {
+            const task = taskDatabase[taskId];
+            document.getElementById('taskTitle').innerText = task.title;
+            document.getElementById('taskText').innerHTML = task.text;
+            codeEditor.value = ""; 
+            codeEditor.placeholder = "# Напишите код для решения этой задачи с нуля...";
+            
+            let html = `<div class="block-title" style="margin-top:15px;">Пример работы:</div>
+                        <table class="example-table">
+                            <tr><th>Входные данные</th><th>Выходные данные</th></tr>`;
+            task.examples.forEach(ex => {
+                html += `<tr><td>${ex.in.replace(/\n/g, '<br>')}</td><td>${ex.out}</td></tr>`;
+            });
+            html += `</table>`;
+            document.getElementById('taskExamples').innerHTML = html;
+        }
+
+        function printLog(msg, type = '') {
+            consoleEl.innerText = msg;
+            consoleEl.className = 'console ' + type;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        function appendLog(msg) {
+            consoleEl.innerText += msg;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        function handleTerminalSubmit() {
+            const val = terminalInput.value.trim();
+            if (val === "") return;
+            appendLog(val + "\n");
+            terminalInput.value = "";
+            if (inputResolver) {
+                const resolve = inputResolver;
+                inputResolver = null;
+                resolve(val);
+            } else {
+                inputQueue.push(val);
+            }
+        }
+
+        terminalSendBtn.addEventListener('click', handleTerminalSubmit);
+        terminalInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleTerminalSubmit(); });
+
+        function builtinRead(x) {
+            if (window.Sk.builtinFiles === undefined || window.Sk.builtinFiles["files"][x] === undefined)
+                throw "File not found: '" + x + "'";
+            return window.Sk.builtinFiles["files"][x];
+        }
+
+        runBtn.addEventListener('click', async () => {
+            const code = codeEditor.value;
+            if (currentMode === 'oge') {
+                const task = taskDatabase[taskSelect.value];
+                printLog("$ [РЕЖИМ ОГЭ]: Тестирование решения... \n", "info");
+                let allPassed = true;
+                let report = "";
+
+                for (let i = 0; i < task.tests.length; i++) {
+                    let test = task.tests[i];
+                    let output = "";
+                    let inputLines = test.input.split('\n');
+                    let idx = 0;
+
+                    try {
+                        window.Sk.configure({
+                            output: (t) => { output += t; },
+                            read: builtinRead,
+                            inputfun: () => inputLines[idx++] || "0"
+                        });
+                        await window.Sk.misceval.asyncToPromise(() => window.Sk.importMainWithBody("<stdin>", false, code, true));
+                        if (output.trim() !== test.expected) {
+                            report += `Тест ${i+1}: Ошибка! На вводе [${test.input.split('\n').join(', ')}] программа вывела "${output.trim()}", ожидалось "${test.expected}"\n`;
+                            allPassed = false;
+                        } else {
+                            report += `Тест ${i+1}: Пройден успешно ✅\n`;
+                        }
+                    } catch(e) {
+                        report += `Тест ${i+1}: Ошибка выполнения (${e.toString().split('\n')[0]})\n`;
+                        allPassed = false;
+                        break;
+                    }
+                }
+
+                if (allPassed) {
+                    printLog(`🎉 [РЕЖИМ ОГЭ] Успех!\n\nВсе проверочные тесты пройдены корректно. Ваше решение идеальное!`, "success");
+                } else {
+                    printLog(`❌ [РЕЖИМ ОГЭ] Ошибка в коде:\n\n${report}`, "error");
+                }
+            } else {
+                printLog("$ Запуск программы...\n");
+                inputQueue = [];
+                terminalInput.disabled = false;
+                terminalSendBtn.disabled = false;
+                terminalInput.focus();
+
+                window.Sk.configure({
+                    output: (text) => appendLog(text), 
+                    read: builtinRead,
+                    inputfun: () => {
+                        return new Promise((resolve) => {
+                            appendLog(`[Ввод]: `); 
+                            if (inputQueue.length > 0) resolve(inputQueue.shift());
+                            else inputResolver = resolve;
+                        });
+                    }
+                });
+
+                try {
+                    await window.Sk.misceval.asyncToPromise(() => window.Sk.importMainWithBody("<stdin>", false, code, true));
+                    appendLog("\n\n$ Программа успешно завершила работу.");
+                } catch(err) {
+                    appendLog("\n\n❌ ОШИБКА В КОДЕ:\n" + err.toString());
+                }
+                terminalInput.disabled = true;
+                terminalSendBtn.disabled = true;
+            }
+        });
+
+        taskSelect.addEventListener('change', (e) => loadTask(e.target.value));
+        document.getElementById('resetCodeBtn').addEventListener('click', () => {
+            if(currentMode === 'oge') codeEditor.value = "";
+            else codeEditor.value = "print('Привет! Введи число:')\na = int(input())\nprint('Вы ввели:', a)";
+        });
+    </script>
+</body>
+</html>
