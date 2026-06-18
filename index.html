@@ -50,6 +50,11 @@
             width: 100%; max-width: 320px; height: 50px;
         }
 
+        /* Автоматическое скрытие пустых контейнеров рекламы */
+        .ad-top:empty, .ad-sidebar-wrap:empty, .ad-mobile-bottom-wrap:empty {
+            display: none !important;
+        }
+
         /* ── Page header ── */
         .page-header {
             width: 100%; max-width: 1500px;
@@ -216,7 +221,6 @@
 
             .mobile-tabs { display: block; position: sticky; top: 0; z-index: 10; }
 
-            /* stack all panels, show/hide via JS */
             .container { flex-direction: column; gap: 0; padding: 0; }
 
             .left-panel, .right-panel { border-radius: 0; border-left: none; border-right: none; }
@@ -228,7 +232,6 @@
 
             .panel { border-radius: 0; }
 
-            /* Mobile tab content visibility */
             .left-panel { display: none; }
             .left-panel.tab-active { display: flex; min-height: calc(100svh - 200px); }
 
@@ -238,13 +241,11 @@
             .right-panel .sub-panel-top--task { display: none; }
             .right-panel .sub-panel-bottom--terminal { display: none; }
 
-            /* Terminal tab */
             .right-panel.tab-terminal .sub-panel-top { display: none; }
             .right-panel.tab-terminal { display: flex; }
             .right-panel.tab-terminal .sub-panel-bottom { display: flex; flex: 1; min-height: calc(100svh - 200px); }
             .right-panel.tab-terminal .sub-panel-top { display: none; }
 
-            /* Task tab */
             .right-panel.tab-task { display: flex; }
             .right-panel.tab-task .sub-panel-top { display: flex; flex: 1; min-height: calc(100svh - 200px); }
             .right-panel.tab-task .sub-panel-bottom { display: none; }
@@ -264,7 +265,7 @@
 <body>
 
     <!-- Top ad banner -->
-    <div class="ad-top">
+    <div class="ad-top" id="adTop">
         <div class="ad-placeholder">Реклама 728×90</div>
     </div>
 
@@ -273,7 +274,7 @@
         <h1>Python-Online для ОГЭ</h1>
     </div>
 
-    <!-- Mobile tabs (visible on small screens) -->
+    <!-- Mobile tabs -->
     <nav class="mobile-tabs" id="mobileTabs">
         <div class="mobile-tab-row">
             <button id="tabCode" class="active" onclick="switchTab('code')">✏️ Код</button>
@@ -282,9 +283,9 @@
         </div>
     </nav>
 
-    <!-- Page body: sidebar ads + main content -->
+    <!-- Page body -->
     <div class="page-body">
-        <!-- Left sidebar ad (desktop only) -->
+        <!-- Left sidebar ad -->
         <div class="ad-sidebar-wrap" id="adLeft">
             <div class="ad-placeholder ad-sidebar">Реклама<br>160×600</div>
         </div>
@@ -292,165 +293,165 @@
         <!-- Main content -->
         <div class="main-content">
             <div class="container" id="mainContainer">
-        <div class="panel left-panel">
-            <div class="controls">
-                <select id="taskSelect" style="display:none;">
-                    <option value="task1">Задание 16_1 (0FCA49)</option>
-                    <option value="task2">Задание 16_2 (B9E24F)</option>
-                    <option value="task3">Задание 16_3 (11484C)</option>
-                    <option value="task4">Задание 16_4 (20C643)</option>
-                    <option value="task5">Задание 16_5 (584B41)</option>
-                    <option value="task6">Задание 16_6 (CC7540)</option>
-                    <option value="task7">Задание 16_7 (B6EBF2)</option>
-                    <option value="task8">Задание 16_8 (AB87F8)</option>
-                    <option value="task9">Задание 16_9 (01BE01)</option>
-                    <option value="task10">Задание 16_10 (014503)</option>
-                    <option value="task11">Задание 16_11 (026108)</option>
-                    <option value="task12">Задание 16_12 (7E3F0A)</option>
-                    <option value="task13">Задание 16_13 (12350E)</option>
-                    <option value="task14">Задание 16_14 (41D07B)</option>
-                    <option value="task15">Задание 16_15 (87B779)</option>
-                    <option value="task16">Задание 16_16 (F81EBB)</option>
-                    <option value="task17">Задание 16_17 (F567B9)</option>
-                    <option value="task18">Задание 16_18 (50D7B2)</option>
-                    <option value="task19">Задание 16_19 (F33914)</option>
-                    <option value="task20">Задание 16_20 (0B7312)</option>
-                    <option value="task21">Задание 16_21 (01BD13)</option>
-                    <option value="task22">Задание 16_22 (B88012)</option>
-                    <option value="task23">Задание 16_23 (B1D013)</option>
-                    <option value="task24">Задание 16_24 (1F9015)</option>
-                    <option value="task25">Задание 16_25 (9B0618)</option>
-                    <option value="task26">Задание 16_26 (4CEE2A)</option>
-                    <option value="task27">Задание 16_27 (F0542E)</option>
-                    <option value="task_C9412A">Задание 16_29 (C9412A)</option>
-                    <option value="task_88822B">Задание 16_30 (88822B)</option>
-                    <option value="task_F437DE">Задание 16_31 (F437DE)</option>
-                    <option value="task_0F8FD5">Задание 16_32 (0F8FD5)</option>
-                    <option value="task_B0B1DA">Задание 16_33 (B0B1DA)</option>
-                    <option value="task_1899DF">Задание 16_34 (1899DF)</option>
-                    <option value="task_1670DB">Задание 16_35 (1670DB)</option>
-                    <option value="task_1CF4DC">Задание 16_36 (1CF4DC)</option>
-                    <option value="task_C498D2">Задание 16_37 (C498D2)</option>
-                    <option value="task_9A0EDE">Задание 16_38 (9A0EDE)</option>
-                    <option value="task_386FDC">Задание 16_39 (386FDC)</option>
-                    <option value="task_FF105F">Задание 16_40 (FF105F)</option>
-                    <option value="task_BDAD52">Задание 16_41 (BDAD52)</option>
-                    <option value="task_5F695F">Задание 16_42 (5F695F)</option>
-                    <option value="task_AEA9A4">Задание 16_43 (AEA9A4)</option>
-                    <option value="task_C72FA1">Задание 16_44 (C72FA1)</option>
-                    <option value="task_E124A8">Задание 16_45 (E124A8)</option>
-<option value="task_2ADBE9">Задание 16_46 (2ADBE9)</option>
-<option value="task_2130E9">Задание 16_47 (2130E9)</option>
-<option value="task_D9A7E1">Задание 16_48 (D9A7E1)</option>
-<option value="task_C5D2E6">Задание 16_49 (C5D2E6)</option>
-<option value="task_3BF5E6">Задание 16_50 (3BF5E6)</option>
-<option value="task_8A66E0">Задание 16_51 (8A66E0)</option>
-<option value="task_8E94E6">Задание 16_52 (8E94E6)</option>
-<option value="task_46CC66">Задание 16_53 (46CC66)</option>
-<option value="task_1DF767">Задание 16_54 (1DF767)</option>
-<option value="task_5A3C65">Задание 16_55 (5A3C65)</option>
-<option value="task_628B6F">Задание 16_56 (628B6F)</option>
-<option value="task_61AF67">Задание 16_57 (61AF67)</option>
-<option value="task_86ED60">Задание 16_58 (86ED60)</option>
-<option value="task_7B0834">Задание 16_59 (7B0834)</option>
-<option value="task_78083D">Задание 16_60 (78083D)</option>
-<option value="task_7AC43D">Задание 16_61 (7AC43D)</option>
-<option value="task_C7F739">Задание 16_62 (C7F739)</option>
-<option value="task_90CE3C">Задание 16_63 (90CE3C)</option>
-<option value="task_EF2331">Задание 16_64 (EF2331)</option>
-<option value="task_6D7939">Задание 16_65 (6D7939)</option>
-<option value="task_B8CB8B">Задание 16_66 (B8CB8B)</option>
-<option value="task_18EA84">Задание 16_67 (18EA84)</option>
-<option value="task_1B108F">Задание 16_68 (1B108F)</option>
-<option value="task_10198C">Задание 16_69 (10198C)</option>
-<option value="task_8A188D">Задание 16_70 (8A188D)</option>
-<option value="task_A367FD">Задание 16_71 (A367FD)</option>
-<option value="task_C576FE">Задание 16_72 (C576FE)</option>
-<option value="task_3F4FFe">Задание 16_73 (3F4FFe)</option>
-<option value="task_17F601">Задание 16_74 (17F601)</option>
-<option value="task_CACD02">Задание 16_75 (CACD02)</option>
-<option value="task_37BA0C">Задание 16_76 (37BA0C)</option>
-<option value="task_4A457B">Задание 16_77 (4A457B)</option>
-<option value="task_5A5C7A">Задание 16_78 (5A5C7A)</option>
-<option value="task_EE667E">Задание 16_79 (EE667E)</option>
-<option value="task_e61278">Задание 16_80 (e61278)</option>
-<option value="task_689C75">Задание 16_81 (689C75)</option>
-<option value="task_18BEB8">Задание 16_82 (18BEB8)</option>
-<option value="task_C3AEB5">Задание 16_83 (C3AEB5)</option>
-<option value="task_E2AEB9">Задание 16_84 (E2AEB9)</option>
-<option value="task_F66F1D">Задание 16_85 (F66F1D)</option>
-<option value="task_DE6B1E">Задание 16_86 (DE6B1E)</option>
-<option value="task_51BD18">Задание 16_87 (51BD18)</option>
-<option value="task_A55719">Задание 16_88 (A55719)</option>
-<option value="task_EB771C">Задание 16_89 (EB771C)</option>
-<option value="task_06D42C">Задание 16_90 (06D42C)</option>
-<option value="task_73582D">Задание 16_91 (73582D)</option>
-<option value="task_B8BD27">Задание 16_92 (B8BD27)</option>
-<option value="task_B92B25">Задание 16_93 (B92B25)</option>
-<option value="task_2DE92F">Задание 16_94 (2DE92F)</option>
-<option value="task_2ecB20">Задание 16_95 (2ecB20)</option>
-<option value="task_2AC626">Задание 16_96 (2AC626)</option>
-<option value="task_50F022">Задание 16_97 (50F022)</option>
-<option value="task_AE0327">Задание 16_98 (AE0327)</option>
-<option value="task_A0B42B">Задание 16_99 (A0B42B)</option>
-<option value="task_937E26">Задание 16_100 (937E26)</option>
-<option value="task_40A3D0">Задание 16_101 (40A3D0)</option>
-<option value="task_4DD2D2">Задание 16_102 (4DD2D2)</option>
-                </select>
-                <button id="runBtn" style="display:none;">▶ Запустить код</button>
-                <button id="hintBtn" class="btn-hint">Показать код решения</button>
-                <button id="resetCodeBtn" class="btn-clear" style="display:none;">Сбросить код</button>
-                <button id="changeModeBtn" class="btn-clear" style="display:none;">↩ Сменить режим</button>
-            </div>
-            
-            <textarea id="codeEditor" spellcheck="false" placeholder="# Выберите режим работы в правой панели..."></textarea>
-        </div>
-
-        <div class="right-panel">
-            <div class="sub-panel-top" id="topPanel">
-                <div id="modeSelectorWindow" class="placeholder-text" style="padding-top: 40px;">
-                    <p style="margin-bottom: 20px; color: #e2e8f0; font-size: 16px;">Выберите режим подготовки:</p>
-                    <div class="mode-selection">
-                        <button id="setNormalModeBtn">Обычный режим (Песочница)</button>
-                        <button id="setOgeModeBtn" class="btn-oge">Режим ОГЭ (С заданиями)</button>
+                <div class="panel left-panel">
+                    <div class="controls">
+                        <select id="taskSelect" style="display:none;">
+                            <option value="task1">Задание 16_1 (0FCA49)</option>
+                            <option value="task2">Задание 16_2 (B9E24F)</option>
+                            <option value="task3">Задание 16_3 (11484C)</option>
+                            <option value="task4">Задание 16_4 (20C643)</option>
+                            <option value="task5">Задание 16_5 (584B41)</option>
+                            <option value="task6">Задание 16_6 (CC7540)</option>
+                            <option value="task7">Задание 16_7 (B6EBF2)</option>
+                            <option value="task8">Задание 16_8 (AB87F8)</option>
+                            <option value="task9">Задание 16_9 (01BE01)</option>
+                            <option value="task10">Задание 16_10 (014503)</option>
+                            <option value="task11">Задание 16_11 (026108)</option>
+                            <option value="task12">Задание 16_12 (7E3F0A)</option>
+                            <option value="task13">Задание 16_13 (12350E)</option>
+                            <option value="task14">Задание 16_14 (41D07B)</option>
+                            <option value="task15">Задание 16_15 (87B779)</option>
+                            <option value="task16">Задание 16_16 (F81EBB)</option>
+                            <option value="task17">Задание 16_17 (F567B9)</option>
+                            <option value="task18">Задание 16_18 (50D7B2)</option>
+                            <option value="task19">Задание 16_19 (F33914)</option>
+                            <option value="task20">Задание 16_20 (0B7312)</option>
+                            <option value="task21">Задание 16_21 (01BD13)</option>
+                            <option value="task22">Задание 16_22 (B88012)</option>
+                            <option value="task23">Задание 16_23 (B1D013)</option>
+                            <option value="task24">Задание 16_24 (1F9015)</option>
+                            <option value="task25">Задание 16_25 (9B0618)</option>
+                            <option value="task26">Задание 16_26 (4CEE2A)</option>
+                            <option value="task27">Задание 16_27 (F0542E)</option>
+                            <option value="task_C9412A">Задание 16_29 (C9412A)</option>
+                            <option value="task_88822B">Задание 16_30 (88822B)</option>
+                            <option value="task_F437DE">Задание 16_31 (F437DE)</option>
+                            <option value="task_0F8FD5">Задание 16_32 (0F8FD5)</option>
+                            <option value="task_B0B1DA">Задание 16_33 (B0B1DA)</option>
+                            <option value="task_1899DF">Задание 16_34 (1899DF)</option>
+                            <option value="task_1670DB">Задание 16_35 (1670DB)</option>
+                            <option value="task_1CF4DC">Задание 16_36 (1CF4DC)</option>
+                            <option value="task_C498D2">Задание 16_37 (C498D2)</option>
+                            <option value="task_9A0EDE">Задание 16_38 (9A0EDE)</option>
+                            <option value="task_386FDC">Задание 16_39 (386FDC)</option>
+                            <option value="task_FF105F">Задание 16_40 (FF105F)</option>
+                            <option value="task_BDAD52">Задание 16_41 (BDAD52)</option>
+                            <option value="task_5F695F">Задание 16_42 (5F695F)</option>
+                            <option value="task_AEA9A4">Задание 16_43 (AEA9A4)</option>
+                            <option value="task_C72FA1">Задание 16_44 (C72FA1)</option>
+                            <option value="task_E124A8">Задание 16_45 (E124A8)</option>
+                            <option value="task_2ADBE9">Задание 16_46 (2ADBE9)</option>
+                            <option value="task_2130E9">Задание 16_47 (2130E9)</option>
+                            <option value="task_D9A7E1">Задание 16_48 (D9A7E1)</option>
+                            <option value="task_C5D2E6">Задание 16_49 (C5D2E6)</option>
+                            <option value="task_3BF5E6">Задание 16_50 (3BF5E6)</option>
+                            <option value="task_8A66E0">Задание 16_51 (8A66E0)</option>
+                            <option value="task_8E94E6">Задание 16_52 (8E94E6)</option>
+                            <option value="task_46CC66">Задание 16_53 (46CC66)</option>
+                            <option value="task_1DF767">Задание 16_54 (1DF767)</option>
+                            <option value="task_5A3C65">Задание 16_55 (5A3C65)</option>
+                            <option value="task_628B6F">Задание 16_56 (628B6F)</option>
+                            <option value="task_61AF67">Задание 16_57 (61AF67)</option>
+                            <option value="task_86ED60">Задание 16_58 (86ED60)</option>
+                            <option value="task_7B0834">Задание 16_59 (7B0834)</option>
+                            <option value="task_78083D">Задание 16_60 (78083D)</option>
+                            <option value="task_7AC43D">Задание 16_61 (7AC43D)</option>
+                            <option value="task_C7F739">Задание 16_62 (C7F739)</option>
+                            <option value="task_90CE3C">Задание 16_63 (90CE3C)</option>
+                            <option value="task_EF2331">Задание 16_64 (EF2331)</option>
+                            <option value="task_6D7939">Задание 16_65 (6D7939)</option>
+                            <option value="task_B8CB8B">Задание 16_66 (B8CB8B)</option>
+                            <option value="task_18EA84">Задание 16_67 (18EA84)</option>
+                            <option value="task_1B108F">Задание 16_68 (1B108F)</option>
+                            <option value="task_10198C">Задание 16_69 (10198C)</option>
+                            <option value="task_8A188D">Задание 16_70 (8A188D)</option>
+                            <option value="task_A367FD">Задание 16_71 (A367FD)</option>
+                            <option value="task_C576FE">Задание 16_72 (C576FE)</option>
+                            <option value="task_3F4FFe">Задание 16_73 (3F4FFe)</option>
+                            <option value="task_17F601">Задание 16_74 (17F601)</option>
+                            <option value="task_CACD02">Задание 16_75 (CACD02)</option>
+                            <option value="task_37BA0C">Задание 16_76 (37BA0C)</option>
+                            <option value="task_4A457B">Задание 16_77 (4A457B)</option>
+                            <option value="task_5A5C7A">Задание 16_78 (5A5C7A)</option>
+                            <option value="task_EE667E">Задание 16_79 (EE667E)</option>
+                            <option value="task_e61278">Задание 16_80 (e61278)</option>
+                            <option value="task_689C75">Задание 16_81 (689C75)</option>
+                            <option value="task_18BEB8">Задание 16_82 (18BEB8)</option>
+                            <option value="task_C3AEB5">Задание 16_83 (C3AEB5)</option>
+                            <option value="task_E2AEB9">Задание 16_84 (E2AEB9)</option>
+                            <option value="task_F66F1D">Задание 16_85 (F66F1D)</option>
+                            <option value="task_DE6B1E">Задание 16_86 (DE6B1E)</option>
+                            <option value="task_51BD18">Задание 16_87 (51BD18)</option>
+                            <option value="task_A55719">Задание 16_88 (A55719)</option>
+                            <option value="task_EB771C">Задание 16_89 (EB771C)</option>
+                            <option value="task_06D42C">Задание 16_90 (06D42C)</option>
+                            <option value="task_73582D">Задание 16_91 (73582D)</option>
+                            <option value="task_B8BD27">Задание 16_92 (B8BD27)</option>
+                            <option value="task_B92B25">Задание 16_93 (B92B25)</option>
+                            <option value="task_2DE92F">Задание 16_94 (2DE92F)</option>
+                            <option value="task_2ecB20">Задание 16_95 (2ecB20)</option>
+                            <option value="task_2AC626">Задание 16_96 (2AC626)</option>
+                            <option value="task_50F022">Задание 16_97 (50F022)</option>
+                            <option value="task_AE0327">Задание 16_98 (AE0327)</option>
+                            <option value="task_A0B42B">Задание 16_99 (A0B42B)</option>
+                            <option value="task_937E26">Задание 16_100 (937E26)</option>
+                            <option value="task_40A3D0">Задание 16_101 (40A3D0)</option>
+                            <option value="task_4DD2D2">Задание 16_102 (4DD2D2)</option>
+                        </select>
+                        <button id="runBtn" style="display:none;">▶ Запустить код</button>
+                        <button id="hintBtn" class="btn-hint">Показать код решения</button>
+                        <button id="resetCodeBtn" class="btn-clear" style="display:none;">Сбросить код</button>
+                        <button id="changeModeBtn" class="btn-clear" style="display:none;">↩ Сменить режим</button>
                     </div>
+                    
+                    <textarea id="codeEditor" spellcheck="false" placeholder="# Выберите режим работы в правой панели..."></textarea>
                 </div>
 
-                <div id="normalModeBox" class="placeholder-text" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px;">
-                        <span style="color: #fff; font-weight: bold;">Обычный режим</span>
-                        <span class="badge badge-normal">Песочница</span>
-                    </div>
-                    <p>Задания скрыты. Пишите любой код на Python слева, вводите данные и тестируйте свои алгоритмы без ограничений.</p>
-                </div>
+                <div class="right-panel">
+                    <div class="sub-panel-top" id="topPanel">
+                        <div id="modeSelectorWindow" class="placeholder-text" style="padding-top: 40px;">
+                            <p style="margin-bottom: 20px; color: #e2e8f0; font-size: 16px;">Выберите режим подготовки:</p>
+                            <div class="mode-selection">
+                                <button id="setNormalModeBtn">Обычный режим (Песочница)</button>
+                                <button id="setOgeModeBtn" class="btn-oge">Режим ОГЭ (С заданиями)</button>
+                            </div>
+                        </div>
 
-                <div id="taskBox" class="task-box">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div id="taskTitle" class="task-title" style="margin:0;">Загрузка...</div>
-                        <span class="badge badge-oge">Режим ОГЭ</span>
-                    </div>
-                    <div id="taskText">Текст задания...</div>
-                    <div id="taskExamples"></div>
-                </div>
-            </div>
+                        <div id="normalModeBox" class="placeholder-text" style="display: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px;">
+                                <span style="color: #fff; font-weight: bold;">Обычный режим</span>
+                                <span class="badge badge-normal">Песочница</span>
+                            </div>
+                            <p>Задания скрыты. Пишите любой код на Python слева, вводите данные и тестируйте свои алгоритмы без ограничений.</p>
+                        </div>
 
-            <div class="sub-panel-bottom">
-                <div class="block-title">
-                    <span>Командная строка:</span>
-                </div>
-                <div class="terminal-container">
-                    <div id="console" class="console">Для начала работы выберите режим выше...</div>
-                    <div class="terminal-input-row">
-                        <input type="text" id="terminalInput" class="terminal-input" placeholder="Введите число и нажмите Enter..." disabled>
-                        <button id="terminalSendBtn" class="terminal-send-btn" disabled>Отправить</button>
+                        <div id="taskBox" class="task-box">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <div id="taskTitle" class="task-title" style="margin:0;">Загрузка...</div>
+                                <span class="badge badge-oge">Режим ОГЭ</span>
+                            </div>
+                            <div id="taskText">Текст задания...</div>
+                            <div id="taskExamples"></div>
+                        </div>
+                    </div>
+
+                    <div class="sub-panel-bottom">
+                        <div class="block-title">
+                            <span>Командная строка:</span>
+                        </div>
+                        <div class="terminal-container">
+                            <div id="console" class="console">Для начала работы выберите режим выше...</div>
+                            <div class="terminal-input-row">
+                                <input type="text" id="terminalInput" class="terminal-input" placeholder="Введите число и нажмите Enter..." disabled>
+                                <button id="terminalSendBtn" class="terminal-send-btn" disabled>Отправить</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
             </div><!-- /.container -->
         </div><!-- /.main-content -->
 
-        <!-- Right sidebar ad (desktop only) -->
+        <!-- Right sidebar ad -->
         <div class="ad-sidebar-wrap" id="adRight">
             <div class="ad-placeholder ad-sidebar">Реклама<br>160×600</div>
         </div>
@@ -460,6 +461,7 @@
     <div class="ad-mobile-bottom-wrap" id="adMobileBottom">
         <div class="ad-placeholder ad-mobile-bottom">Реклама 320×50</div>
     </div>
+
     <script src="tasks.js"></script>
     <script>
         let currentMode = null; 
@@ -480,6 +482,29 @@
         const resetCodeBtn = document.getElementById('resetCodeBtn');
         const changeModeBtn = document.getElementById('changeModeBtn');
 
+        // --- Функция проверки и скрытия пустых рекламных блоков ---
+        function handleAdCollapsing() {
+            const adWrappers = ['adTop', 'adLeft', 'adRight', 'adMobileBottom'];
+            adWrappers.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    // Проверяем, добавился ли в блок реальный скрипт/баннер (iframe, ins, или внешние скрипты сети)
+                    const hasRealAd = el.querySelector('iframe') || 
+                                      el.querySelector('ins') || 
+                                      el.querySelector('script:not([src])') || 
+                                      el.innerHTML.includes('yandex') || 
+                                      el.innerHTML.includes('google');
+                    
+                    // Если реальной рекламы нет (остался только наш текст-заглушка или блок скрыт блокировщиком)
+                    if (!hasRealAd) {
+                        el.style.display = 'none';
+                    }
+                }
+            });
+        }
+        // Запускаем проверку рекламы после полной загрузки страницы
+        window.addEventListener('load', () => setTimeout(handleAdCollapsing, 1000));
+
         document.getElementById('setNormalModeBtn').addEventListener('click', () => activateInterface('normal'));
         document.getElementById('setOgeModeBtn').addEventListener('click', () => activateInterface('oge'));
         changeModeBtn.addEventListener('click', resetToMainMenu);
@@ -491,12 +516,15 @@
             }
         });
 
+        // --- Расширенная логика работы клавиатуры в textarea (Автоотступы + Автозакрытие скобок/кавычек) ---
         codeEditor.addEventListener('keydown', function(e) {
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const text = this.value;
+
+            // 1. Умные автоотступы при нажатии Enter
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const start = this.selectionStart;
-                const end = this.selectionEnd;
-                const text = this.value;
                 const beforeCursor = text.substring(0, start);
                 const lastNewLine = beforeCursor.lastIndexOf('\n');
                 const currentLine = beforeCursor.substring(lastNewLine + 1);
@@ -506,6 +534,53 @@
                 const newText = text.substring(0, start) + '\n' + currentIndent + text.substring(end);
                 this.value = newText;
                 this.selectionStart = this.selectionEnd = start + 1 + currentIndent.length;
+                return;
+            }
+
+            // 2. Автозакрытие скобок и кавычек
+            const pairs = {
+                '(': ')',
+                '[': ']',
+                '{': '}',
+                '"': '"',
+                "'": "'"
+            };
+
+            if (pairs[e.key] !== undefined) {
+                e.preventDefault();
+                const closingChar = pairs[e.key];
+                
+                // Оборачиваем выделенный текст или просто вставляем пустую пару
+                this.value = text.substring(0, start) + e.key + text.substring(start, end) + closingChar + text.substring(end);
+                
+                // Перемещаем курсор внутрь скобок/кавычек
+                this.selectionStart = start + 1;
+                this.selectionEnd = end + 1;
+                return;
+            }
+
+            // 3. Умное удаление (Backspace удаляет сразу пару скобок/кавычек, если они пустые)
+            if (e.key === 'Backspace' && start === end && start > 0) {
+                const charBefore = text[start - 1];
+                const charAfter = text[start];
+                if ((charBefore === ')' && text[start-2] === '(') || 
+                    (charBefore === ']' && text[start-2] === '[') ||
+                    (charBefore === '}' && text[start-2] === '{') ||
+                    (charBefore === '"' && text[start-2] === '"') ||
+                    (charBefore === "'" && text[start-2] === "'") ||
+                    ((charBefore === '(' && charAfter === ')') ||
+                     (charBefore === '[' && charAfter === ']') ||
+                     (charBefore === '{' && charAfter === '}') ||
+                     (charBefore === '"' && charAfter === '"') ||
+                     (charBefore === "'" && charAfter === "'"))) {
+                    
+                    // Если курсор прямо между ними
+                    if ((charBefore === '(' && charAfter === ')') || (charBefore === '[' && charAfter === ']') || (charBefore === '{' && charAfter === '}') || (charBefore === '"' && charAfter === '"') || (charBefore === "'" && charAfter === "'")) {
+                        e.preventDefault();
+                        this.value = text.substring(0, start - 1) + text.substring(start + 1);
+                        this.selectionStart = this.selectionEnd = start - 1;
+                    }
+                }
             }
         });
 
@@ -688,10 +763,8 @@
             const tabTask = document.getElementById('tabTask');
             const tabTerminal = document.getElementById('tabTerminal');
 
-            // Reset tab button styles
             [tabCode, tabTask, tabTerminal].forEach(b => b.className = '');
 
-            // Reset panel classes
             leftPanel.classList.remove('tab-active');
             rightPanel.classList.remove('tab-active', 'tab-task', 'tab-terminal');
 
@@ -707,7 +780,6 @@
             }
         }
 
-        // On mobile: auto-switch to terminal after run
         const origRunBtn = document.getElementById('runBtn');
         origRunBtn.addEventListener('click', () => {
             if (window.innerWidth <= 768 && currentMode === 'normal') {
@@ -715,14 +787,12 @@
             }
         }, true);
 
-        // Initialise mobile tab state
         if (window.innerWidth <= 768) {
             switchTab('code');
         }
 
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
-                // Reset to desktop layout
                 leftPanel.classList.remove('tab-active');
                 rightPanel.classList.remove('tab-active', 'tab-task', 'tab-terminal');
             } else {
